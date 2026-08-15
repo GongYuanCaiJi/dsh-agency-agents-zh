@@ -10,17 +10,17 @@ import { apply } from '../index.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 
-// 獨立真相 1：上游權威清單 AGENT-LIST.md（pin agency-agents-zh@1.2.7，
-// gitHead 465aa4a5a40a376e9ef6c2e151889997992215b9）宣告的 agent id。
-// 每個 id 是 agent 檔案名去掉 .md；skill name 直接採用它（kebab-case 檔名）。
+// 独立真相 1：上游权威清单 AGENT-LIST.md（pin agency-agents-zh@1.2.7，
+// gitHead 465aa4a5a40a376e9ef6c2e151889997992215b9）声明的 agent id。
+// 每个 id 是 agent 文件名去掉 .md；skill name 直接采用它（kebab-case 文件名）。
 const EXPECTED_AGENTS = readFileSync(join(ROOT, 'AGENT-LIST.md'), 'utf8')
   .split('\n')
   .map((line) => /^\| `([a-z0-9][a-z0-9-]*)`/.exec(line)?.[1])
   .filter(Boolean)
   .sort()
 
-// 獨立真相 2：直接從檔案系統讀 frontmatter（不經 provider 的解析路徑），
-// 驗證 provider 接對了 description 這條線。
+// 独立真相 2：直接从文件系统读 frontmatter（不经 provider 的解析路径），
+// 验证 provider 接对了 description 这条线。
 function readFrontmatterDescription(file) {
   const body = readFileSync(file, 'utf8')
   const fm = /^---\n([\s\S]*?)\n---/u.exec(body)
@@ -28,11 +28,11 @@ function readFrontmatterDescription(file) {
   return d?.[1]?.replace(/^['"]|['"]$/g, '').trim()
 }
 
-// 獨立真相 3：不走 provider，直接 walk 檔案系統找「有 name frontmatter 的 .md」，
-// 驗證 AGENT-LIST 的每個 id 都有真實檔案對應（provider 之外的第二條掃描路徑）。
-// 掃描定義與上游 scripts/check-counts.mjs 一致：所有頂層目錄，排除
-// node_modules/scripts/integrations/examples/.git（strategy 沒有 name frontmatter，
-// 自然不會被算成 agent）。
+// 独立真相 3：不走 provider，直接 walk 文件系统找「有 name frontmatter 的 .md」，
+// 验证 AGENT-LIST 的每个 id 都有真实文件对应（provider 之外的第二条扫描路径）。
+// 扫描定义与上游 scripts/check-counts.mjs 一致：所有顶层目录，排除
+// node_modules/scripts/integrations/examples/.git（strategy 没有 name frontmatter，
+// 自然不会被算成 agent）。
 const SKIP_DIRS = new Set(['node_modules', 'scripts', 'integrations', 'examples', '.git', '.github'])
 
 function walkAgentsOnDisk() {
@@ -61,22 +61,22 @@ function makeContext() {
   return { ctx, registry }
 }
 
-test('AGENT-LIST 的每個 id 在檔案系統都有對應 agent 檔（獨立 walk）', () => {
+test('AGENT-LIST 的每个 id 在文件系统都有对应 agent 文件（独立 walk）', () => {
   const onDisk = walkAgentsOnDisk()
-  assert.equal(onDisk.size, EXPECTED_AGENTS.length, 'AGENT-LIST 數目與磁碟 agent 數必須一致')
+  assert.equal(onDisk.size, EXPECTED_AGENTS.length, 'AGENT-LIST 数目与磁盘 agent 数必须一致')
   const missing = EXPECTED_AGENTS.filter((id) => !onDisk.has(id))
-  assert.deepEqual(missing, [], 'AGENT-LIST 宣告但磁碟上找不到的 id')
+  assert.deepEqual(missing, [], 'AGENT-LIST 声明但磁盘上找不到的 id')
   const extra = [...onDisk].filter((id) => !EXPECTED_AGENTS.includes(id)).sort()
-  assert.deepEqual(extra, [], '磁碟上有但 AGENT-LIST 未宣告的 id')
+  assert.deepEqual(extra, [], '磁盘上有但 AGENT-LIST 未声明的 id')
 })
 
-test('listBundledAgents 回傳 exactly 上游 AGENT-LIST 宣告的 agent 集合', () => {
+test('listBundledAgents 回传 exactly 上游 AGENT-LIST 声明的 agent 集合', () => {
   const candidates = listBundledAgents()
   const names = candidates.map((c) => c.name).sort()
   assert.deepEqual(names, EXPECTED_AGENTS)
 })
 
-test('每個 candidate 滿足 dsh skill registry 契約', () => {
+test('每个 candidate 满足 dsh skill registry 契约', () => {
   const candidates = listBundledAgents()
   assert.ok(candidates.length > 0)
   for (const c of candidates) {
@@ -89,14 +89,14 @@ test('每個 candidate 滿足 dsh skill registry 契約', () => {
     assert.equal(c.rank, 600)
     assert.equal(c.resourceBase?.kind, 'directory')
     assert.ok(typeof c.resourceBase?.path === 'string')
-    // locator 指向包內實際存在的 agent 檔，且就在 resourceBase 目錄下
+    // locator 指向包内实际存在的 agent 文件，且就在 resourceBase 目录下
     assert.equal(c.locator, join(c.resourceBase.path, `${c.name}.md`))
     assert.ok(existsSync(c.locator), `${c.locator} must exist`)
     assert.ok(readFileSync(c.locator, 'utf8').length > 0)
   }
 })
 
-test('candidate.description 與檔案 frontmatter 一致（接對線）', () => {
+test('candidate.description 与文件 frontmatter 一致（接对线）', () => {
   const candidates = listBundledAgents()
   for (const c of candidates) {
     const expected = readFrontmatterDescription(c.locator)
@@ -105,7 +105,7 @@ test('candidate.description 與檔案 frontmatter 一致（接對線）', () => 
   }
 })
 
-test('registerAgencyAgents 把 provider 接進真 registry', async () => {
+test('registerAgencyAgents 把 provider 接进真 registry', async () => {
   const { ctx, registry } = makeContext()
   registerAgencyAgents(ctx)
   const summaries = await registry.list({ cwd: ROOT })
@@ -117,10 +117,10 @@ test('registerAgencyAgents 把 provider 接進真 registry', async () => {
   }
 })
 
-test('registry.get 載入的內容是磁碟上的逐字 agent 檔', async () => {
+test('registry.get 加载的内容是磁盘上的逐字 agent 文件', async () => {
   const { ctx, registry } = makeContext()
   registerAgencyAgents(ctx)
-  // 抽一個原創（中文）agent 與一個翻譯 agent 驗證逐字保留
+  // 抽一个原创（中文）agent 与一个翻译 agent 验证逐字保留
   for (const name of ['marketing-xiaohongshu-operator', 'engineering-software-architect']) {
     const agent = await registry.get(name, { cwd: ROOT })
     assert.ok(agent, `${name} must resolve`)
@@ -133,7 +133,7 @@ test('registry.get 載入的內容是磁碟上的逐字 agent 檔', async () => 
   }
 })
 
-test('index apply() 註冊完整 catalog', async () => {
+test('index apply() 注册完整 catalog', async () => {
   const { ctx, registry } = makeContext()
   apply(ctx)
   const summaries = await registry.list({ cwd: ROOT })

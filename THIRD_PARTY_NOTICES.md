@@ -19,23 +19,26 @@ The upstream source is used under the MIT License.
 
 ### What the port ships
 
-The upstream repository's 347 tracked files are copied verbatim, with three
-exceptions, each explained in the port report (issue #39):
+The upstream repository has 347 tracked files at the pinned commit. 342 are
+copied verbatim (byte-identical, SHA-256 below); 5 differ, each explained in
+the port report (issue #39):
 
-- `.github/workflows/sync-to-gitee.yml` — hard-codes the upstream author's
-  Gitee remote and `GITEE_TOKEN`; keeping it would force-push this repo's
-  `main` to the upstream Gitee mirror, so it is not portable.
+- `.github/workflows/sync-to-gitee.yml` — not ported: hard-codes the upstream
+  author's Gitee remote and `GITEE_TOKEN`; keeping it would force-push this
+  repo's `main` to the upstream Gitee mirror, so it is not portable.
 - `LICENSE` — upstream lines kept verbatim, plus one `Copyright (c) 2026
   GongYuanCaiJi (dsh port)` line.
 - `.gitignore` — the playbook standard, because the upstream one ignores
   `integrations/`, which would untrack 14 shipped files.
+- `README.md` — rewritten as a bilingual facade per the port playbook.
+- `package.json` — reshaped to the dsh plugin form (name, dsh.bundle,
+  scripts; upstream `check:counts` kept).
 
-`README.md` is rewritten as a bilingual facade per the port playbook; the
-267 agent files, AGENT-LIST.md, CATALOG.md, UPSTREAM.md, CONTRIBUTING.md,
-scripts, integrations, examples, assets, `.github/` (minus the Gitee sync
-workflow), and `strategy/` are byte-identical to upstream at the pinned
-commit. The plugin's dsh adaptation layer (`index.js`, `index.d.ts`,
-`cordis.patch.yml`, `lib/`, `test/`, `package.json`) is new and has no
+The 342 verbatim files are the 267 agent files plus AGENT-LIST.md, CATALOG.md,
+UPSTREAM.md, CONTRIBUTING.md, scripts, integrations, examples, assets,
+`.github/` (minus the Gitee sync workflow), `strategy/`, and
+`.gitattributes`. The plugin's dsh adaptation layer (`index.js`,
+`index.d.ts`, `cordis.patch.yml`, `lib/`, `test/`) is new and has no
 upstream counterpart.
 
 ### Verifying the verbatim claim yourself
@@ -46,7 +49,11 @@ compare:
 
 ```bash
 curl -sL https://github.com/jnMetaCode/agency-agents-zh/archive/465aa4a5a40a376e9ef6c2e151889997992215b9.tar.gz | tar xz
-diff -rq agency-agents-zh-465aa4a5a40a376e9ef6c2e151889997992215b9 marketing marketing && echo "marketing OK"
+UP=agency-agents-zh-465aa4a5a40a376e9ef6c2e151889997992215b9
+for d in academic design engineering finance game-development gis hr legal marketing paid-media product project-management sales security spatial-computing specialized strategy supply-chain support testing; do
+  diff -rq "$UP/$d" "$d" || exit 1
+done
+echo "all agent dirs OK"
 ```
 
 Expected differences are limited to: `sync-to-gitee.yml` (not ported),
@@ -54,7 +61,7 @@ Expected differences are limited to: `sync-to-gitee.yml` (not ported),
 `README.md` (bilingual facade), `package.json` (dsh plugin shape), and the
 dsh adaptation files listed above.
 
-Expected SHA-256 of every verbatim file (345 files):
+Expected SHA-256 of every verbatim file (342 files):
 
 ```
 `.gitattributes` | `ed65c024021bacdc57203bc9d5a23f2afacc32088f8f595e5b7d82710d7b70de`
@@ -204,8 +211,6 @@ Expected SHA-256 of every verbatim file (345 files):
 `integrations/windsurf/README.md` | `93b3c1dc2ac3c884f32f0469ada9f268a399bc7f423402b29ea4dc84482fb19a`
 `legal/legal-contract-reviewer.md` | `944f34ffda7a6114f78c66e6f41d223e39b44cdcbcf0057581d0e542035eeae8`
 `legal/legal-policy-writer.md` | `4bcb56b77d791122225ed4e4d6559dc172a0cedfa3328a34e0aeda3ef589a365`
-`lib/agents.js` | `5006923e264374c03fc8534bb0d5ad9d4e4d39b95399914b54ab4d8946707165`
-`lib/frontmatter.js` | `9443cbdd696ee0c405639bedc2db584d01b2c7107b5aec3753d0a9397935727b`
 `marketing/marketing-aeo-foundations.md` | `b8be54289956cd6c597c9d1c496d426932b9c96bf28b36ecfb04bd66b0d9eef4`
 `marketing/marketing-agentic-search-optimizer.md` | `ea493d85f7cd26b50b6f32f5fab6b38862cf560e215853dfd781c87212a94da1`
 `marketing/marketing-ai-citation-strategist.md` | `13b52ae43e1dfe0f0e6bba2688ec991d3bb446bcbdfb69eec91426830ee421ff`
@@ -392,7 +397,6 @@ Expected SHA-256 of every verbatim file (345 files):
 `support/support-legal-compliance-checker.md` | `e5cec1a449d621c9857754c27703edfe5bca14c070fde50d84768d5213bb770b`
 `support/support-recruitment-specialist.md` | `adf4319813dce63ab5e0a749ed91bd6bf63eb6d90b51f9352e48072e3aa6bec5`
 `support/support-support-responder.md` | `6f67293675246d14c236c4abbe22dee0a25c906aecb2c3187d44909ea7c2d0a5`
-`test/agents.test.mjs` | `a6f768728de760a9c681a253272ba737a3f41660ebf805f9e3f1652103ff1355`
 `testing/testing-accessibility-auditor.md` | `4ddef77c85566032c7b6bfc048d3e68cf73b139002b76e445fe7371faea152bf`
 `testing/testing-api-tester.md` | `109e840ef3d78add8cb2aade5815183a3853b3c25e04a1288e02d856c377baaa`
 `testing/testing-embedded-qa-engineer.md` | `b7c628087be808dcdb628cbec732cc94fb498de8b5d7ebf67c2083b8a9de9f38`
@@ -403,6 +407,7 @@ Expected SHA-256 of every verbatim file (345 files):
 `testing/testing-tool-evaluator.md` | `2b5f84cc8e625b2db7b4ff3afb36e96cc346f2982f0419c05f9da5edaa519dfd`
 `testing/testing-workflow-optimizer.md` | `c78a3364ac8b726cff3c3decbd26ebe59fb0d4d20a198937461d4c5e1b294ef9`
 ```
+
 
 `package.json` (dsh plugin shape), `README.md` (bilingual facade), `LICENSE`
 (added port line), `.gitignore` (playbook standard) and the dsh adaptation

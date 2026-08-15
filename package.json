@@ -35,6 +35,7 @@
     "index.d.ts",
     "lib",
     "cordis.patch.yml",
+    "scripts/",
     "academic/",
     "design/",
     "engineering/",
@@ -63,7 +64,10 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
   },
   "dsh": {
     "bundle": {
