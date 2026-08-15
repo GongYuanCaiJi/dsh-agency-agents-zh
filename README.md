@@ -18,7 +18,7 @@
 
 ### 功能
 
-- **267 个角色，零改动**：覆盖工程、设计、营销、产品、游戏、安全、GIS、金融等 20 个部门，含 52 个中国市场原创智能体（小红书/抖音/微信/飞书/钉钉等平台运营，以及跨境电商、政务 ToG、医疗合规、机械设计等垂直领域）。
+- **267 个角色，零改动**：覆盖工程、设计、营销、产品、游戏、安全、GIS、金融等 19 个部门，含 52 个中国市场原创智能体（小红书/抖音/微信/飞书/钉钉等平台运营，以及跨境电商、政务 ToG、医疗合规、机械设计等垂直领域）。
 - **逐字可自验**：所有角色文件与上游 v1.2.7 逐字节一致，杂凑钉在 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)，附可直接复制的验证命令。
 - **按需加载**：catalog 只暴露名字与描述，角色正文在模型真正调用时才读取，不占启动时间。
 
@@ -68,7 +68,7 @@ role definitions from upstream are copied unchanged and loaded through dsh's
 ### Features
 
 - **267 roles, zero changes**: engineering, design, marketing, product, game,
-  security, GIS, finance and more across 20 departments, including 52
+  security, GIS, finance and more across 19 departments, including 52
   China-market original agents (Xiaohongshu/Douyin/WeChat/Feishu/DingTalk
   operations, cross-border e-commerce, government ToG, healthcare compliance,
   mechanical design, …).
