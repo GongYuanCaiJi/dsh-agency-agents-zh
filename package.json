@@ -1,11 +1,22 @@
 {
-  "name": "agency-agents-zh",
-  "version": "1.2.7",
-  "description": "267 个即插即用的 AI 专家角色定义 — 从前端开发到区块链安全，从小红书运营到抖音策略",
-  "scripts": {
-    "check:counts": "node scripts/check-counts.mjs"
+  "name": "dsh-agency-agents-zh",
+  "version": "0.1.0",
+  "description": "267 个即插即用的 AI 专家角色定义——从前端开发到区块链安全，从小红书运营到抖音策略（移植自 agency-agents-zh）",
+  "type": "module",
+  "license": "MIT",
+  "author": "GongYuanCaiJi",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GongYuanCaiJi/dsh-agency-agents-zh.git"
+  },
+  "homepage": "https://github.com/GongYuanCaiJi/dsh-agency-agents-zh#readme",
+  "bugs": {
+    "url": "https://github.com/GongYuanCaiJi/dsh-agency-agents-zh/issues"
   },
   "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "dsh",
     "ai-agents",
     "prompts",
     "system-prompts",
@@ -13,18 +24,17 @@
     "multi-agent",
     "agency-agents",
     "llm",
-    "claude",
     "deepseek",
     "roles"
   ],
-  "author": "jnMetaCode",
-  "license": "MIT",
-  "homepage": "https://github.com/jnMetaCode/agency-agents-zh#readme",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jnMetaCode/agency-agents-zh"
+  "engines": {
+    "node": ">=20"
   },
   "files": [
+    "index.js",
+    "index.d.ts",
+    "lib",
+    "cordis.patch.yml",
     "academic/",
     "design/",
     "engineering/",
@@ -47,6 +57,28 @@
     "testing/",
     "README.md",
     "AGENT-LIST.md",
-    "LICENSE"
-  ]
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": "./index.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "check:counts": "node scripts/check-counts.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh-invariants": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-scope": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-skill": "0.1.0-rc.6"
+  }
 }
