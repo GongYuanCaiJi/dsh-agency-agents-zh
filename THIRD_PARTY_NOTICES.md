@@ -1,3 +1,8 @@
+---
+name: THIRD_PARTY_NOTICES
+description: Third-party license notices for dsh-agency-agents-zh
+---
+
 # Third-party notices
 
 ## jnMetaCode/agency-agents-zh
